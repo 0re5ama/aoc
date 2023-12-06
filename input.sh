@@ -1,0 +1,1 @@
+curl "https://adventofcode.com/2023/day/$1/input" --compressed -H 'Cookie: session=53616c7465645f5f22ab4f4ab235740b194f710c176c35b176ba32b467c2e17ccad3b3209bc9d2828c9092e68bdc525f99a0cd4e55529bea39e7ae3fa00dd06b'
