@@ -1,4 +1,4 @@
-use regex::Regex;
+use fancy_regex::Regex;
 use std::collections::HashMap;
 
 pub fn sln(input: String) {
@@ -37,10 +37,10 @@ fn parse(input: &String, re: &str, er: &str) -> u64 {
     input
         .lines()
         .map(|c| -> u64 {
-            if let Some(fd) = reg.find(c).map(|m| m.as_str()) {
+            if let Ok(fd) = reg.find(c).map(|m| m.expect("ERROR").as_str()) {
                 let first = nums.get(fd).unwrap_or(&fd);
                 let reverse = c.chars().rev().collect::<String>();
-                if let Some(fd_rev) = rev.find(reverse.as_str()).map(|m| m.as_str()) {
+                if let Ok(fd_rev) = rev.find(reverse.as_str()).map(|m| m.expect("ERROR").as_str()) {
                     let revnum = fd_rev.chars().rev().collect::<String>();
                     let revnum = &revnum.as_str();
                     let last = nums.get(revnum).unwrap_or(&revnum);
