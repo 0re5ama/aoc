@@ -1,4 +1,6 @@
-use std::fmt;
+use std::{fmt, ops::Range};
+
+use itertools::Itertools;
 
 #[derive(Debug)]
 struct Map {
@@ -34,14 +36,6 @@ impl Mapper {
     fn new(maps: Vec<Map>, name: String) -> Self {
         Self { maps, name }
     }
-
-    fn map_val(&self, input: u64) -> u64 {
-        let map = self.maps.iter().find(|m| m.range().contains(&input));
-        match map {
-            Some(map) => input - map.src + map.dst,
-            _ => input,
-        }
-    }
 }
 
 impl Map {
@@ -52,9 +46,6 @@ impl Map {
             cnt,
         }
     }
-    fn range(&self) -> std::ops::Range<u64> {
-        self.src..(self.src + self.cnt)
-    }
 }
 
 pub fn sln(input: String) {
@@ -63,49 +54,63 @@ pub fn sln(input: String) {
     println!("{}", q2(&garden));
 }
 
-fn localize(s: u64, garden: &Garden) -> u64 {
-    let mut disp = s.to_string();
-    let res = garden.mappers.iter().fold(s, |a, m| {
-        let val = m.map_val(a);
-        disp = format!("{disp} -> {val}");
-        val
-    });
-    disp = format!("{disp} -> {res}");
-    println!("{disp}");
-    res
+struct MapTree {
+    src: Range<u64>,
+    dst: Range<u64>,
 }
 
-fn q1(garden: &Garden) -> u64 {
-    garden
-        .seeds
-        .iter()
-        .map(|&s| localize(s, garden))
-        .min()
-        .unwrap()
-}
-
-fn q2(garden: &Garden) -> u64 {
-    for m in garden.mappers.iter().rev() {
-        println!("{m:?}");
+impl MapTree {
+    fn new(src: Range<u64>, dst: Range<u64>) -> Self {
+        Self { src, dst }
     }
-    0
+
+    fn map_from_src(&self, src: &Range<u64>) -> Self {
+        let end = if src.end == u64::MAX {
+            u64::MAX
+        } else {
+            src.end - self.src.start + self.dst.start
+        };
+        let start = src.start - self.src.start + self.dst.start;
+        let res = Self::new(src.clone(), start..end);
+        res
+    }
+
+    fn map_from_dst(&self, dst: &Range<u64>) -> Self {
+        let end = if dst.end == u64::MAX {
+            u64::MAX
+        } else {
+            self.src.start + dst.end - self.dst.start
+        };
+        let start = self.src.start + dst.start - self.dst.start;
+        let res = Self::new(start..end, dst.clone());
+        res
+    }
 }
 
-fn _q2_brute(garden: &Garden) -> u64 {
-    let mut min = u64::max_value();
-    for i in 0..garden.seeds.len() / 2 {
-        let (start, end) = (
-            garden.seeds[i * 2],
-            garden.seeds[i * 2] + garden.seeds[i * 2 + 1],
-        );
-        println!("====================================================================================================");
-        println!("{start} ==> {end}");
-        println!("====================================================================================================");
-        for i in start..end {
-            min = min.min(localize(i, garden));
-        }
+impl fmt::Display for MapTree {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_fmt(format_args!("{:?} -> {:?}", self.src, self.dst))
     }
-    min
+}
+
+impl fmt::Debug for MapTree {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_fmt(format_args!("{:?} -> {:?}", self.src, self.dst))
+    }
+}
+
+fn intersection<T>(a: &Range<T>, b: &Range<T>) -> Option<Range<T>>
+where
+    T: Ord,
+    T: Copy,
+{
+    let start = a.start.max(b.start);
+    let end = a.end.min(b.end);
+    if start <= end {
+        Some(start..end)
+    } else {
+        None
+    }
 }
 
 const MAPPER_NAMES: [&str; 7] = [
@@ -146,9 +151,83 @@ fn parse(input: &String) -> Garden {
                 })
                 .collect::<Vec<Map>>();
             maps.sort_by(|a, b| a.dst.cmp(&b.dst));
-            Mapper::new(maps, String::from(MAPPER_NAMES[i]))
+            Mapper::new(maps, String::from(MAPPER_NAMES[i - 1]))
         })
         .collect::<Vec<_>>();
 
     Garden::new(seeds, mappers)
+}
+
+fn q1(garden: &Garden) -> u64 {
+    solve(garden.seeds.iter().map(|&s| s..s + 1).collect(), garden)
+}
+
+fn q2(garden: &Garden) -> u64 {
+    solve(
+        garden
+            .seeds
+            .iter()
+            .tuples()
+            .map(|(a, b)| *a..*a + *b)
+            .collect(),
+        garden,
+    )
+}
+
+fn solve(ranges: Vec<Range<u64>>, garden: &Garden) -> u64 {
+    let mut all_tree: Vec<MapTree> = Vec::new();
+    garden.mappers.iter().rev().for_each(|m| {
+        let mut tree: Vec<MapTree> = Vec::new();
+        let mut init = 0u64;
+        m.maps.iter().for_each(|mm| {
+            if mm.dst != init {
+                tree.push(MapTree::new(init..mm.dst, init..mm.dst));
+            }
+            tree.push(MapTree::new(
+                mm.src..mm.src + mm.cnt,
+                mm.dst..mm.dst + mm.cnt,
+            ));
+            init = mm.dst + mm.cnt;
+        });
+        tree.push(MapTree::new(init..u64::MAX, init..u64::MAX));
+
+        if all_tree.len() == 0 {
+            all_tree.append(&mut tree);
+            return;
+        }
+
+        all_tree = tree
+            .iter()
+            .map(|curr| {
+                let valid: Vec<MapTree> = all_tree
+                    .iter()
+                    .filter_map(|next| match intersection(&next.src, &curr.dst) {
+                        Some(r) => Some(MapTree::new(
+                            curr.map_from_dst(&r).src,
+                            next.map_from_src(&r).dst,
+                        )),
+                        None => None,
+                    })
+                    .collect();
+                valid
+            })
+            .flatten()
+            .sorted_by(|a, b| a.dst.start.cmp(&b.dst.start))
+            .collect();
+    });
+
+    ranges
+        .iter()
+        .map(|range| {
+            all_tree
+                .iter()
+                .filter_map(|next| match intersection(&next.src, range) {
+                    Some(r) => Some(next.map_from_src(&r).dst.start),
+                    None => None,
+                })
+                .min()
+                .unwrap()
+        })
+        .min()
+        .unwrap()
 }

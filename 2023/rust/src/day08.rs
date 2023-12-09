@@ -70,13 +70,12 @@ fn q2(input: &String) -> u64 {
     let list = set
         .map
         .keys()
-        .filter(|k| Regex::new(r"A$").unwrap().is_match(k))
+        .filter(|k| k.ends_with("A"))
         .map(|start| resolve(&set, start, false));
     list.into_iter().fold(1, |a, b| a.lcm(&b))
 }
 
 fn resolve(set: &Set, start: &str, zzz: bool) -> u64 {
-    let re = Regex::new(r"Z$").unwrap();
     let mut found = false;
     let mut curr = start;
     let mut count = 0usize;
@@ -88,7 +87,7 @@ fn resolve(set: &Set, start: &str, zzz: bool) -> u64 {
 
         match zzz {
             true => found = curr == "ZZZ",
-            false => found = re.is_match(curr),
+            false => found = curr.ends_with("Z"),
         }
     }
     count as u64

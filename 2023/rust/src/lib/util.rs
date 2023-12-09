@@ -8,8 +8,3 @@ pub fn gcd(a: u64, b: u64) -> u64 {
 pub fn lcm(a: u64, b: u64) -> u64 {
     a * b / gcd(a, b)
 }
-
-enum AOCPart {
-    Silver,
-    Gold,
-}
