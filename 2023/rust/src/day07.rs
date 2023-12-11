@@ -2,6 +2,17 @@ use std::cmp::Ordering;
 
 use fancy_regex::Regex;
 
+pub fn sln(input: String, q: Option<u8>) {
+    match q {
+        Some(1) => println!("{}", q1(&input)),
+        Some(2) => println!("{}", q2(&input)),
+        _ => {
+            println!("{}", q1(&input));
+            println!("{}", q2(&input));
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 struct Hand {
     _name: String,
@@ -196,11 +207,6 @@ impl PartialEq for Game {
             _ => false,
         }
     }
-}
-
-pub fn sln(input: String) {
-    println!("{}", q1(&input));
-    println!("{}", q2(&input));
 }
 
 fn q1(input: &String) -> u64 {

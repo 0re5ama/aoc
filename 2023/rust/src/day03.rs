@@ -1,6 +1,12 @@
-pub fn sln(input: String) {
-    println!("{}", q1(&input));
-    println!("{}", q2(&input));
+pub fn sln(input: String, q: Option<u8>) {
+    match q {
+        Some(1) => println!("{}", q1(&input)),
+        Some(2) => println!("{}", q2(&input)),
+        _ => {
+            println!("{}", q1(&input));
+            println!("{}", q2(&input));
+        }
+    }
 }
 
 struct _Number<'a> {

@@ -1,9 +1,15 @@
 use fancy_regex::Regex;
 use std::collections::HashMap;
 
-pub fn sln(input: String) {
-    println!("{}", q1(&input));
-    println!("{}", q2(input));
+pub fn sln(input: String, q: Option<u8>) {
+    match q {
+        Some(1) => println!("{}", q1(&input)),
+        Some(2) => println!("{}", q2(&input)),
+        _ => {
+            println!("{}", q1(&input));
+            println!("{}", q2(&input));
+        }
+    }
 }
 
 fn q1(input: &String) -> u64 {
@@ -11,7 +17,7 @@ fn q1(input: &String) -> u64 {
     parse(&input, re, re)
 }
 
-pub fn q2(input: String) -> u64 {
+fn q2(input: &String) -> u64 {
     let re = r"([0-9]|zero|one|two|three|four|five|six|seven|eight|nine)";
     let er = r"([0-9]|orez|eno|owt|eerht|ruof|evif|xis|neves|thgie|enin)";
     parse(&input, re, er)

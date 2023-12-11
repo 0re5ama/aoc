@@ -2,10 +2,16 @@ use std::collections::HashMap;
 
 use regex::Regex;
 
-pub fn sln(input: String) {
+pub fn sln(input: String, q: Option<u8>) {
     let data = parse(&input);
-    println!("{}", q1(&data));
-    println!("{}", q2(&data));
+    match q {
+        Some(1) => println!("{}", q1(&data)),
+        Some(2) => println!("{}", q2(&data)),
+        _ => {
+            println!("{}", q1(&data));
+            println!("{}", q2(&data));
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -59,7 +65,8 @@ fn q2(input: &Vec<ScratchCard>) -> u64 {
     });
     map.keys()
         .map(|k| map.get(k).unwrap())
-        .fold(0, |a, b| a + *b as u64) + input.len() as u64
+        .fold(0, |a, b| a + *b as u64)
+        + input.len() as u64
 }
 
 fn parse(input: &String) -> Vec<ScratchCard> {

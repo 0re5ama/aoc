@@ -1,5 +1,18 @@
 use std::collections::HashMap;
 
+pub fn sln(input: String, q: Option<u8>) {
+    let games = parse(&input);
+    match q {
+        Some(1) => println!("{}", q1(&games)),
+        Some(2) => println!("{}", q2(&games)),
+        _ => {
+            println!("{}", q1(&games));
+            println!("{}", q2(&games));
+        }
+    }
+}
+
+
 const RED_MAX: u64 = 12;
 const GREEN_MAX: u64 = 13;
 const BLUE_MAX: u64 = 14;
@@ -32,12 +45,6 @@ impl Bag {
 struct Game {
     id: u64,
     bags: Vec<Bag>,
-}
-
-pub fn sln(input: String) {
-    let games = parse(&input);
-    println!("{}", q1(&games));
-    println!("{}", q2(&games));
 }
 
 fn q1(games: &Vec<Game>) -> u64 {

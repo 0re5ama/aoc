@@ -1,6 +1,12 @@
-pub fn sln(input: String) {
-    println!("{}", q1(&input));
-    println!("{}", q2(&input));
+pub fn sln(input: String, q: Option<u8>) {
+    match q {
+        Some(1) => println!("{}", q1(&input)),
+        Some(2) => println!("{}", q2(&input)),
+        _ => {
+            println!("{}", q1(&input));
+            println!("{}", q2(&input));
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -44,9 +50,7 @@ fn parse_str(input: &String, n: usize, f: &dyn Fn(&str) -> String) -> Vec<u64> {
         .unwrap()
         .trim();
     let sp = f(intermed);
-        sp.split_whitespace()
-        .map(|x| x.parse().unwrap())
-        .collect()
+    sp.split_whitespace().map(|x| x.parse().unwrap()).collect()
 }
 
 fn unjoined(input: &str) -> String {

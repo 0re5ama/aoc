@@ -2,6 +2,18 @@ use std::{fmt, ops::Range};
 
 use itertools::Itertools;
 
+pub fn sln(input: String, q: Option<u8>) {
+    let garden = parse(&input);
+    match q {
+        Some(1) => println!("{}", q1(&garden)),
+        Some(2) => println!("{}", q2(&garden)),
+        _ => {
+            println!("{}", q1(&garden));
+            println!("{}", q2(&garden));
+        }
+    }
+}
+
 #[derive(Debug)]
 struct Map {
     dst: u64,
@@ -46,12 +58,6 @@ impl Map {
             cnt,
         }
     }
-}
-
-pub fn sln(input: String) {
-    let garden = parse(&input);
-    println!("{}", q1(&garden));
-    println!("{}", q2(&garden));
 }
 
 struct MapTree {

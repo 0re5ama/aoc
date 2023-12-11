@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-pub fn sln(input: String) {
+pub fn sln(input: String, q: Option<u8>) {
     let parsed: Vec<Vec<i64>> = input
         .lines()
         .map(|l| {
@@ -9,9 +9,14 @@ pub fn sln(input: String) {
                 .collect::<Vec<i64>>()
         })
         .collect();
-
-    println!("{}", q1(&parsed));
-    println!("{}", q2(&parsed));
+    match q {
+        Some(1) => println!("{}", q1(&parsed)),
+        Some(2) => println!("{}", q2(&parsed)),
+        _ => {
+            println!("{}", q1(&parsed));
+            println!("{}", q2(&parsed));
+        }
+    }
 }
 
 enum Dir {
