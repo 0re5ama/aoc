@@ -39,7 +39,7 @@ impl ScratchCard {
     }
 }
 
-fn q1(input: &Vec<ScratchCard>) -> u64 {
+fn q1(input: &[ScratchCard]) -> u64 {
     input.iter().fold(0, |a, s| {
         let matched = s.matched();
         a + match matched {
@@ -53,14 +53,11 @@ fn q2(input: &Vec<ScratchCard>) -> u64 {
     let mut map: HashMap<usize, usize> = HashMap::new();
     input.iter().for_each(|s| {
         let matched = s.matched();
-        match matched {
-            1.. => {
-                let count = map.get(&s.id).unwrap_or(&0) + 1;
-                (s.id + 1..s.id + 1 + matched).for_each(|m| {
-                    map.insert(m, map.get(&m).unwrap_or(&0usize) + count);
-                });
-            }
-            _ => {}
+        if let 1.. = matched {
+            let count = map.get(&s.id).unwrap_or(&0) + 1;
+            (s.id + 1..s.id + 1 + matched).for_each(|m| {
+                map.insert(m, map.get(&m).unwrap_or(&0usize) + count);
+            });
         }
     });
     map.keys()
@@ -69,7 +66,7 @@ fn q2(input: &Vec<ScratchCard>) -> u64 {
         + input.len() as u64
 }
 
-fn parse(input: &String) -> Vec<ScratchCard> {
+fn parse(input: &str) -> Vec<ScratchCard> {
     let re = Regex::new(r"^Card\s+(?<id>\d+):\s+(?<win>(?:\d+\s+)+)\|\s+(?<card>(?:\d+\s+)+\d+)$")
         .unwrap();
     input

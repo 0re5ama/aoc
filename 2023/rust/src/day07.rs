@@ -34,7 +34,7 @@ enum ValType {
 
 impl Hand {
     fn get_match(&self, str: String) -> Vec<String> {
-        let mut hd_str = str.chars().map(|c| c).collect::<Vec<char>>();
+        let mut hd_str = str.chars().collect::<Vec<char>>();
         hd_str.sort_by(|a, b| joker_cmp(&a.to_string(), &b.to_string()));
         let hd_str = hd_str.into_iter().collect::<String>();
         match self.patt.captures(&hd_str).unwrap() {
@@ -50,9 +50,8 @@ impl Hand {
     }
 
     fn map_joker(&self, input: String) -> Option<u64> {
-        if let None = input.find("J") {
-            return None;
-        }
+        input.find('J')?;
+
         Some(match self.val_type {
             ValType::Five => 7000,
             ValType::Four => 7000,
@@ -184,8 +183,6 @@ impl Ord for Game {
                 let a_val = a.hand.val;
                 let a_val = a.hand.map_joker(a.hd_str.clone()).unwrap_or(a_val);
 
-                if a.hd_str == String::from("JJ488") {}
-
                 let b_val = b.hand.val;
                 let b_val = b.hand.map_joker(b.hd_str.clone()).unwrap_or(b_val);
                 match a_val.cmp(&b_val) {
@@ -202,20 +199,17 @@ impl Eq for Game {}
 
 impl PartialEq for Game {
     fn eq(&self, other: &Self) -> bool {
-        match self.cmp(other) {
-            Ordering::Equal => true,
-            _ => false,
-        }
+        matches!(self.cmp(other), Ordering::Equal)
     }
 }
 
-fn q1(input: &String) -> u64 {
+fn q1(input: &str) -> u64 {
     let vals = hand_vals();
     let mut hands = input
         .lines()
         .map(|x| {
             let row = x.split_whitespace().collect::<Vec<&str>>();
-            let mut hd_str = row[0].chars().map(|c| c).collect::<Vec<char>>();
+            let mut hd_str = row[0].chars().collect::<Vec<char>>();
             hd_str.sort_by(|a, b| normal_cmp(&a.to_string(), &b.to_string()));
             let hd_str = hd_str.into_iter().collect::<String>();
             let bet = row[1].parse::<u64>().unwrap();
@@ -239,13 +233,13 @@ fn q1(input: &String) -> u64 {
     })
 }
 
-fn q2(input: &String) -> u64 {
+fn q2(input: &str) -> u64 {
     let vals = hand_vals();
     let mut hands = input
         .lines()
         .map(|x| {
             let row = x.split_whitespace().collect::<Vec<&str>>();
-            let mut hd_str = row[0].chars().map(|c| c).collect::<Vec<char>>();
+            let mut hd_str = row[0].chars().collect::<Vec<char>>();
             hd_str.sort_by(|a, b| joker_cmp(&a.to_string(), &b.to_string()));
             let hd_str = hd_str.into_iter().collect::<String>();
             let bet = row[1].parse::<u64>().unwrap();

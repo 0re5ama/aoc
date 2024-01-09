@@ -77,8 +77,7 @@ impl MapTree {
             src.end - self.src.start + self.dst.start
         };
         let start = src.start - self.src.start + self.dst.start;
-        let res = Self::new(src.clone(), start..end);
-        res
+        Self::new(src.clone(), start..end)
     }
 
     fn map_from_dst(&self, dst: &Range<u64>) -> Self {
@@ -88,8 +87,7 @@ impl MapTree {
             self.src.start + dst.end - self.dst.start
         };
         let start = self.src.start + dst.start - self.dst.start;
-        let res = Self::new(start..end, dst.clone());
-        res
+        Self::new(start..end, dst.clone())
     }
 }
 
@@ -129,9 +127,9 @@ const MAPPER_NAMES: [&str; 7] = [
     "humidity to location",
 ];
 
-fn parse(input: &String) -> Garden {
+fn parse(input: &str) -> Garden {
     let mut list = input.split("\n\n");
-    let seeds_str = list.nth(0).unwrap().split(":").nth(1).unwrap().trim();
+    let seeds_str = list.next().unwrap().split(':').nth(1).unwrap().trim();
     let seeds = seeds_str
         .split_whitespace()
         .map(|s| s.parse::<u64>().unwrap())
@@ -140,9 +138,9 @@ fn parse(input: &String) -> Garden {
     let mut i = 0;
     let mappers = list
         .map(|map_str| {
-            i = i + 1;
+            i += 1;
             let mut maps = map_str
-                .split(":")
+                .split(':')
                 .nth(1)
                 .unwrap()
                 .trim()
@@ -152,8 +150,7 @@ fn parse(input: &String) -> Garden {
                         .split_whitespace()
                         .map(|n| n.parse::<u64>().unwrap())
                         .collect();
-                    let mpr = Map::new(arr[0], arr[1], arr[2]);
-                    mpr
+                    Map::new(arr[0], arr[1], arr[2])
                 })
                 .collect::<Vec<Map>>();
             maps.sort_by(|a, b| a.dst.cmp(&b.dst));
@@ -197,27 +194,24 @@ fn solve(ranges: Vec<Range<u64>>, garden: &Garden) -> u64 {
         });
         tree.push(MapTree::new(init..u64::MAX, init..u64::MAX));
 
-        if all_tree.len() == 0 {
+        if all_tree.is_empty() {
             all_tree.append(&mut tree);
             return;
         }
 
         all_tree = tree
             .iter()
-            .map(|curr| {
+            .flat_map(|curr| {
                 let valid: Vec<MapTree> = all_tree
                     .iter()
-                    .filter_map(|next| match intersection(&next.src, &curr.dst) {
-                        Some(r) => Some(MapTree::new(
-                            curr.map_from_dst(&r).src,
-                            next.map_from_src(&r).dst,
-                        )),
-                        None => None,
+                    .filter_map(|next| {
+                        intersection(&next.src, &curr.dst).map(|r| {
+                            MapTree::new(curr.map_from_dst(&r).src, next.map_from_src(&r).dst)
+                        })
                     })
                     .collect();
                 valid
             })
-            .flatten()
             .sorted_by(|a, b| a.dst.start.cmp(&b.dst.start))
             .collect();
     });
@@ -227,9 +221,8 @@ fn solve(ranges: Vec<Range<u64>>, garden: &Garden) -> u64 {
         .map(|range| {
             all_tree
                 .iter()
-                .filter_map(|next| match intersection(&next.src, range) {
-                    Some(r) => Some(next.map_from_src(&r).dst.start),
-                    None => None,
+                .filter_map(|next| {
+                    intersection(&next.src, range).map(|r| next.map_from_src(&r).dst.start)
                 })
                 .min()
                 .unwrap()

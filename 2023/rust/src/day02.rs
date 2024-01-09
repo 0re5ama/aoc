@@ -47,7 +47,7 @@ struct Game {
     bags: Vec<Bag>,
 }
 
-fn q1(games: &Vec<Game>) -> u64 {
+fn q1(games: &[Game]) -> u64 {
     games
         .iter()
         .filter(|game| game.bags.iter().all(|bag| bag.is_valid()))
@@ -55,7 +55,7 @@ fn q1(games: &Vec<Game>) -> u64 {
         .sum()
 }
 
-fn q2(games: &Vec<Game>) -> u64 {
+fn q2(games: &[Game]) -> u64 {
     games
         .iter()
         .map(|game| game.bags.iter().fold(Bag::default(), |a, g| a.higher(g)))
@@ -63,7 +63,7 @@ fn q2(games: &Vec<Game>) -> u64 {
         .sum()
 }
 
-fn parse(input: &String) -> Vec<Game> {
+fn parse(input: &str) -> Vec<Game> {
     input
         .lines()
         .map(|line| -> Game {
@@ -79,7 +79,7 @@ fn parse(input: &String) -> Vec<Game> {
             let bags = parts
                 .next()
                 .unwrap_or("")
-                .split(";")
+                .split(';')
                 .map(|bag_str| {
                     let mut map = HashMap::new();
                     bag_str.split(", ").for_each(|cube| {

@@ -1,6 +1,7 @@
 # Rust
 /target
-/inputs
+/inputs/
+**/ignore/
 
 # Zig
 zig-cache/

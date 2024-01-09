@@ -37,19 +37,14 @@ enum Dir {
 }
 
 struct Maze {
-    path: Vec<Pos>,
+    path: Vec<Pos>, // PERF: Can remove
     points: Vec<Vec<Pos>>,
     map: HashMap<(i32, i32), Pos>,
 }
 
 impl Maze {
     fn on_path(&self, pt: &Pos) -> bool {
-        // self.path.iter().any(|p| p.x == pt.x && p.y == pt.y)
-        if let Some(_) = self.map.get(&(pt.x, pt.y)) {
-            true
-        } else {
-            false
-        }
+        self.map.get(&(pt.x, pt.y)).is_some()
     }
 }
 
@@ -64,7 +59,7 @@ fn q2(maze: &Maze) -> usize {
         .enumerate()
         .flat_map(|(i, row)| {
             row.iter().enumerate().filter_map(move |(j, pt)| {
-                if maze.on_path(&pt) {
+                if maze.on_path(pt) {
                     return None;
                 }
 
@@ -72,10 +67,7 @@ fn q2(maze: &Maze) -> usize {
                     .filter_map(|y| maze.map.get(&(i as i32, y as i32)))
                     .collect_vec()
                     .iter()
-                    .filter(|pt| match pt.ch {
-                        '|' | 'L' | 'J' => true,
-                        _ => false,
-                    })
+                    .filter(|pt| matches!(pt.ch, '|' | 'L' | 'J'))
                     .collect_vec()
                     .len()
                     % 2
@@ -108,7 +100,7 @@ fn next(arr: &Vec<Vec<Pos>>, curr: &Pos, dir: &Dir) -> Option<Pos> {
     }
 }
 
-fn parse(input: &String) -> Maze {
+fn parse(input: &str) -> Maze {
     let arr: Vec<_> = input
         .lines()
         .enumerate()
@@ -175,7 +167,7 @@ fn parse(input: &String) -> Maze {
     let mut curr_dir = poss_dirs[0].clone();
 
     loop {
-        let next = next(&arr, &curr, &curr_dir).clone().unwrap();
+        let next = next(&arr, &curr, &curr_dir).unwrap();
         if next.ch != 'S' {
             map.insert((next.x, next.y), next);
         }

@@ -20,10 +20,10 @@ impl<'a> _Number<'a> {
 }
 */
 
-fn q1(_input: &String) -> u64 {
+fn q1(_input: &str) -> u64 {
     0
 }
 
-fn q2(_input: &String) -> u64 {
+fn q2(_input: &str) -> u64 {
     0
 }

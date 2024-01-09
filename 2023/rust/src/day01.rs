@@ -12,18 +12,18 @@ pub fn sln(input: String, q: Option<u8>) {
     }
 }
 
-fn q1(input: &String) -> u64 {
+fn q1(input: &str) -> u64 {
     let re = r"\d";
-    parse(&input, re, re)
+    parse(input, re, re)
 }
 
-fn q2(input: &String) -> u64 {
+fn q2(input: &str) -> u64 {
     let re = r"([0-9]|zero|one|two|three|four|five|six|seven|eight|nine)";
     let er = r"([0-9]|orez|eno|owt|eerht|ruof|evif|xis|neves|thgie|enin)";
-    parse(&input, re, er)
+    parse(input, re, er)
 }
 
-fn parse(input: &String, re: &str, er: &str) -> u64 {
+fn parse(input: &str, re: &str, er: &str) -> u64 {
     let nums = HashMap::from([
         ("zero", "0"),
         ("one", "1"),
@@ -49,7 +49,7 @@ fn parse(input: &String, re: &str, er: &str) -> u64 {
                 if let Ok(fd_rev) = rev.find(reverse.as_str()).map(|m| m.expect("ERROR").as_str()) {
                     let revnum = fd_rev.chars().rev().collect::<String>();
                     let revnum = &revnum.as_str();
-                    let last = nums.get(revnum).unwrap_or(&revnum);
+                    let last = nums.get(revnum).unwrap_or(revnum);
                     return format!("{}{}", first, last).parse::<u64>().unwrap_or(0);
                 }
             }

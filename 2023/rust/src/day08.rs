@@ -43,7 +43,7 @@ impl Set {
     }
 }
 
-fn gen_set(input: &String) -> Set {
+fn gen_set(input: &str) -> Set {
     let data = input.split("\n\n").collect::<Vec<&str>>();
     let dirs = data[0].to_string();
     let re = Regex::new(r"\w{3}").unwrap();
@@ -59,18 +59,18 @@ fn gen_set(input: &String) -> Set {
     Set::new(map, dirs)
 }
 
-fn q1(input: &String) -> u64 {
+fn q1(input: &str) -> u64 {
     let start = "AAA";
     let set = gen_set(input);
     resolve(&set, start, true)
 }
 
-fn q2(input: &String) -> u64 {
+fn q2(input: &str) -> u64 {
     let set = gen_set(input);
     let list = set
         .map
         .keys()
-        .filter(|k| k.ends_with("A"))
+        .filter(|k| k.ends_with('A'))
         .map(|start| resolve(&set, start, false));
     list.into_iter().fold(1, |a, b| a.lcm(&b))
 }
@@ -80,14 +80,14 @@ fn resolve(set: &Set, start: &str, zzz: bool) -> u64 {
     let mut curr = start;
     let mut count = 0usize;
     while !found {
-        let ix = count as usize % set.dirs.len();
+        let ix = count % set.dirs.len();
         let dir = set.dirs.get(ix..ix + 1).unwrap();
         curr = set.map.get(curr).unwrap().get(dir);
         count += 1;
 
         match zzz {
             true => found = curr == "ZZZ",
-            false => found = curr.ends_with("Z"),
+            false => found = curr.ends_with('Z'),
         }
     }
     count as u64

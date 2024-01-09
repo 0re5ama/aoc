@@ -84,7 +84,7 @@ fn q2(space: &Space) -> usize {
     space.solve(1_000_000)
 }
 
-fn parse(input: &String) -> Space {
+fn parse(input: &str) -> Space {
     let lines: Vec<String> = input.lines().map(|l| l.to_string()).collect();
     let space_rows: Vec<_> = lines
         .iter()
@@ -111,7 +111,7 @@ fn parse(input: &String) -> Space {
         .flat_map(|(i, l)| {
             l.chars().enumerate().filter_map(move |(j, c)| {
                 if c == '#' {
-                    Some(Pos::new(i.clone(), j.clone()))
+                    Some(Pos::new(i, j))
                 } else {
                     None
                 }

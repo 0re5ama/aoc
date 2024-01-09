@@ -44,17 +44,17 @@ fn interpolate(seq: &Vec<i64>, dir: Dir) -> i64 {
         }
     };
 
-    let diff = iters.iter().rev().fold(0i64, |d, s| fun(d, s));
-    fun(diff, &seq)
+    let diff = iters.iter().rev().fold(0i64, fun);
+    fun(diff, seq)
 }
 
-fn q1(input: &Vec<Vec<i64>>) -> i64 {
+fn q1(input: &[Vec<i64>]) -> i64 {
     input
         .iter()
         .fold(0, |a, seq| a + interpolate(seq, Dir::Next))
 }
 
-fn q2(input: &Vec<Vec<i64>>) -> i64 {
+fn q2(input: &[Vec<i64>]) -> i64 {
     input
         .iter()
         .fold(0, |a, seq| a + interpolate(seq, Dir::Prev))

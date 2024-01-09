@@ -37,15 +37,15 @@ fn eval(times: Vec<u64>, dists: Vec<u64>) -> u64 {
             }
             0
         })
-        .fold(1u64, |a, v| a * v)
+        .product::<u64>()
 }
 
-fn parse_str(input: &String, n: usize, f: &dyn Fn(&str) -> String) -> Vec<u64> {
+fn parse_str(input: &str, n: usize, f: &dyn Fn(&str) -> String) -> Vec<u64> {
     let intermed = input
         .lines()
         .nth(n)
         .unwrap()
-        .split(":")
+        .split(':')
         .nth(1)
         .unwrap()
         .trim();
@@ -57,7 +57,7 @@ fn unjoined(input: &str) -> String {
     String::from(input)
 }
 fn joined(input: &str) -> String {
-    input.replace(" ", "")
+    input.replace(' ', "")
 }
 
 fn gen_races(times: Vec<u64>, dists: Vec<u64>) -> Vec<Race> {
@@ -68,13 +68,13 @@ fn gen_races(times: Vec<u64>, dists: Vec<u64>) -> Vec<Race> {
         .collect()
 }
 
-fn q1(input: &String) -> u64 {
+fn q1(input: &str) -> u64 {
     let times = parse_str(input, 0, &unjoined);
     let dists = parse_str(input, 1, &unjoined);
     eval(times, dists)
 }
 
-fn q2(input: &String) -> u64 {
+fn q2(input: &str) -> u64 {
     let times = parse_str(input, 0, &joined);
     let dists = parse_str(input, 1, &joined);
     eval(times, dists)
