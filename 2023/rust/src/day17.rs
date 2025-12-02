@@ -146,7 +146,6 @@ trait Crucible {
 
         while let Some(node) = queue.pop() {
             if &node.pos == dst && node.dir_count >= self.min() {
-                println!("Ans: {:?}", node);
                 return node.cost;
             }
 

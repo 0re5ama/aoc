@@ -1,1 +1,3 @@
-curl "https://adventofcode.com/2023/day/$1/input" --compressed -H 'Cookie: session=53616c7465645f5f22ab4f4ab235740b194f710c176c35b176ba32b467c2e17ccad3b3209bc9d2828c9092e68bdc525f99a0cd4e55529bea39e7ae3fa00dd06b'
+curl "https://adventofcode.com/$1/day/$2/input"\
+    --compressed\
+    -H 'Cookie: session=53616c7465645f5ff7db6cf7dcfaeaa9a3606909544b8b1b9e8b648a598479fa6742d5a34462905a2ec1d3e0d92fd15b053968b9acd8f23765664d67f8a7c9f0' >> "$HOME/dev/aoc/$1/inputs/$2"

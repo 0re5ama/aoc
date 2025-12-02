@@ -33,7 +33,7 @@ struct TileInfo {
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
-enum Direction {
+pub enum Direction {
     Up,
     Down,
     Left,

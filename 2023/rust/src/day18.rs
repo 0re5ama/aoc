@@ -1,16 +1,22 @@
+use rust::Direction;
+
 pub fn sln(input: String, q: Option<u8>) {
-    let _ = input;
     match q {
-        Some(1) => println!("{}", q1()),
+        Some(1) => println!("{}", q1(&input)),
         Some(2) => println!("{}", q2()),
         _ => {
-            println!("{}", q1());
+            println!("{}", q1(&input));
             println!("{}", q2());
         }
     }
 }
 
-fn q1() -> u64 {
+struct Operation {
+    dir: Direction,
+}
+
+fn q1(input: &str) -> u64 {
+    let ops = input.lines().map(|l| l);
     0
 }
 
